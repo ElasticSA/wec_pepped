@@ -3,13 +3,7 @@
 # Assume the .man file is in the same dir as this script
 cd $PSScriptRoot
 
-# Base name for our WEC Forward Channels
-$wfcName = "WecFwdChans"
-
-# Paths to the SDK tools
-$SdkPath = "C:\Program Files (x86)\Windows Kits\8.1\bin\x64"
-$DotNetPath = "C:\Windows\Microsoft.NET\Framework64\v4.0.30319"
-
+. .\wec_config.ps1
 
 echo "Message Compiler"
 & $SdkPath\mc.exe ".\$wfcName.man"

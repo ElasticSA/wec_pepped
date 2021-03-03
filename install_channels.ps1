@@ -3,8 +3,7 @@
 # Assume the .dll file is in the same dir as this script
 cd $PSScriptRoot
 
-# Base name for our WEC Forward Channels
-$wfcName = "WecFwdChans"
+. .\wec_config.ps1
 
 # Uninstall any previously installed Channels
 If (Test-Path -Path "C:\Windows\System32\${wfcNAme}.man") {

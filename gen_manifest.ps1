@@ -2,28 +2,7 @@
 
 cd $PSScriptRoot
 
-# Use [guid]::NewGuid() to get new GUIDs, if you want to add new Providers
-$ProviderList = @{
-    'WecFwdLog-Domain-Clients'     = "{ea76befc-2be5-4a24-bfab-3d9303ac27d5}";
-    'WecFwdLog-Domain-Controllers' = "{4f365d6b-57ea-466d-ad6e-22864307ad5f}";
-    'WecFwdLog-Domain-Members'     = "{47e1763d-1e45-435f-9073-70c1c08f70ee}";
-    'WecFwdLog-Domain-Misc'        = "{5bb6e603-33c4-4be3-bf40-102476243076}";
-    'WecFwdLog-Domain-Privileged'  = "{c00ccb56-d596-40de-9a88-4e6c2a4244d4}";
-    'WecFwdLog-Domain-Servers'     = "{1673d607-4c45-4cbf-80ee-554eaf561626}"
-}
-
-# This list of (max) 8 channels is common to all Providers in these scrips
-$ChannelList = @(
-    "Application",
-    "Misc",
-    "Script",
-    "Security",
-    "Service",
-    "Sysmon",
-    "System"
-)
-
-$wfcName = "WecFwdChans"
+. .\wec_config.ps1
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ File generation starts here ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @"
@@ -37,7 +16,7 @@ foreach ( $prov in $ProviderList.GetEnumerator() ) {
     $prov_sym = $($prov.key -replace '-','_')
 
     @"
-    			<provider name="$($prov.key)" guid="$($prov.value)" symbol="${prov_sym}_EVENTS" resourceFileName="%SystemRoot%\System32\${wfcName}.dll" messageFileName="%SystemRoot%\System32\${wfcName}.dll">
+    			<provider name="$($prov.key)" guid="$($prov.Value.GUID)" symbol="${prov_sym}_EVENTS" resourceFileName="%SystemRoot%\System32\${wfcName}.dll" messageFileName="%SystemRoot%\System32\${wfcName}.dll">
 				<events>
 					<event symbol="DUMMY_EVENT" value="100" version="0" template="DUMMY_TEMPLATE" message="`$(string.$($prov.key).event.100.message)">
 					</event>
@@ -53,10 +32,10 @@ foreach ( $prov in $ProviderList.GetEnumerator() ) {
 				<channels>
 "@ | Out-File -Append -Encoding unicode -Force -FilePath .\${wfcName}.man
 
-    foreach ( $chan in $ChannelList ) {
+    foreach ( $chan in $ChannelList.GetEnumerator() ) {
 
     @"
-					<channel name="$($prov.key)/${chan}" chid="$($prov.key)/${chan}" symbol="${prov_sym}_${chan}" type="Admin" enabled="true" message="`$(string.$($prov.key).channel.${prov_sym}_${chan}.message)">
+					<channel name="$($prov.key)/$($chan.key)" chid="$($prov.key)/$($chan.key)" symbol="${prov_sym}_$($chan.key)" type="Admin" enabled="true" message="`$(string.$($prov.key).channel.${prov_sym}_$($chan.key).message)">
 					</channel>
 "@ | Out-File -Append -Encoding unicode -Force -FilePath .\${wfcName}.man
     }
@@ -79,9 +58,9 @@ foreach ( $prov in $ProviderList.GetEnumerator() ) {
 				</string>
 "@  | Out-File -Append -Encoding unicode -Force -FilePath .\${wfcName}.man
 
-    foreach ( $chan in $ChannelList ) {
+    foreach ( $chan in $ChannelList.GetEnumerator() ) {
         @"
-				<string id="$($prov.key).channel.${prov_sym}_${chan}.message" value="$($prov.key)/${chan}">
+				<string id="$($prov.key).channel.${prov_sym}_$($chan.key).message" value="$($prov.key)/$($chan.key)">
 				</string>
 "@  | Out-File -Append -Encoding unicode -Force -FilePath .\${wfcName}.man
     }

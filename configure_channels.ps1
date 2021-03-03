@@ -1,34 +1,23 @@
-﻿
-$ProviderList = @(
-    "WecFwdLog-Domain-Clients",
-    "WecFwdLog-Domain-Controllers",
-    "WecFwdLog-Domain-Members",
-    "WecFwdLog-Domain-Misc",
-    "WecFwdLog-Domain-Privileged",
-    "WecFwdLog-Domain-Servers"
-)
+﻿$ErrorActionPreference = "Stop"
 
-$ChannelList = @(
-    "Application",
-    "Misc",
-    "Script",
-    "Security",
-    "Service",
-    "Sysmon",
-    "System"
-)
+cd $PSScriptRoot 
 
-$LogPathPrefix = "C:\Logs"
-$LogSize = 10737418240 # 10G
+. .\wec_config.ps1
 
-foreach ( $prov in $ProviderList ) {
-    foreach ( $chan in $ChannelList ) {
-        $LogPAth = "${LogPathPrefix}\${prov}_${chan}.evtx"
+$ignore = (New-Item -Force -ItemType Directory -Path "$LogPathPrefix")
+
+foreach ( $prov in $ProviderList.GetEnumerator() ) {
+    $LogSize = $prov.Value.LogSize
+    New-Item -Force -ItemType Directory -Path "$($prov.Value.LogDir)" | Out-Null
+
+    foreach ( $chan in $ChannelList.GetEnumerator() ) {
+        $LogPath = "$($prov.Value.LogDir)\$($prov.key)_$($chan.key).evtx"
+
         echo "=============================================="
         echo "$prov/$chan"
-        & wevtutil @('sl', "$prov/$chan", "/lfn:${LogPath}")
-        & wevtutil @('sl', "$prov/$chan", "/ms:$LogSize")
-        & wevtutil @('gl', "$prov/$chan")
+        & wevtutil @('sl', "$($prov.key)/$($chan.key)", "/lfn:${LogPath}")
+        & wevtutil @('sl', "$($prov.key)/$($chan.key)", "/ms:${LogSize}")
+        & wevtutil @('gl', "$($prov.key)/$($chan.key)")
         echo "----------------------------------------------"
     }
 }
