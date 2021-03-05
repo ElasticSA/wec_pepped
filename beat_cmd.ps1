@@ -5,8 +5,8 @@ cd $PSScriptRoot
 # This script would work for other beats by setting the env var 'BEAT'
 $beat = If ($env:BEAT) {$env:BEAT} Else {"winlogbeat"}
 
-# Use exmaple config to avoid chicken-egg issues
-$config = "${beat}.example.yml"
+# Use exmaple config for keystore to avoid chicken-egg issues
+$config = If ($args[0] -eq 'keystore') {"${beat}.example.yml"} else {"${beat}.yml"}
 
 $datadir = "C:\ProgramData\Elastic\Beats\${beat}"
 
