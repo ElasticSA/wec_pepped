@@ -19,9 +19,12 @@ If (-Not (Get-Command Get-ADDomain -ErrorAction SilentlyContinue)) {
     catch {}
 }
 
-# Get or create AD group. New Groups will be created in $NewGroupOU (Auto set in IF below!)
+# ~~~~~~~~~~~~~~~~~~~ Configurables Start Here ~~~~~~~~~~~~~~~~~~~~~~
+
+# Summon-ADGroup() [below] uses this. 
+# New Groups will be created in $NewGroupOU (Auto set to 'Users' OU just below!)
 $NewGroupOU = $null
-# AD Base OU (Auto set in IF below)
+# AD Base OU (Auto set just below)
 $BaseOU = $null
 # Comment this out if you set these manually above
 If (Get-Command Get-ADDomain -ErrorAction SilentlyContinue) {
@@ -42,7 +45,7 @@ $GroupList = @{
 }
 
 # List of Providers with
-# - IT unique GUID; Use [guid]::NewGuid() to get new GUIDs, if you want to add new Providers
+# - A unique GUID; Use [guid]::NewGuid() to get new GUIDs, if you want to add new Providers
 # - The (channel) Logs Directory; Recommend using dedicated disks/storage e.g. D:\Logs
 # - The max Log Size before rollover
 # - The AD Groups that map hosts to them (Include/Exclude)
@@ -161,8 +164,11 @@ $ChannelList = @{
 
 }
 
+
+# ~~~~~~~~~~~~~ Mostly internal ~~~~~~~~~~~~~~~~~~~~
+
 # There will be an error here regarding Get-ADGroup if the AD PowerShell modules are not already installed
-# The try{}catch{} a few lines above tries to install the module
+# The try{}catch{} at the start of this file tries to install the module
 function Summon-ADGroup ([string]$name)
 {
     $result = $null
@@ -177,7 +183,7 @@ function Summon-ADGroup ([string]$name)
     return $result
 }
 
-# Base name for our WEC Forward Channels
+# Base name for our WEC Forward Channels files
 $wfcName = "WecFwdChans"
 
 # Paths to the SDK tools

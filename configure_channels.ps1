@@ -4,8 +4,6 @@ cd $PSScriptRoot
 
 . .\wec_config.ps1
 
-$ignore = (New-Item -Force -ItemType Directory -Path "$LogPathPrefix")
-
 foreach ( $prov in $ProviderList.GetEnumerator() ) {
     $LogSize = $prov.Value.LogSize
     New-Item -Force -ItemType Directory -Path "$($prov.Value.LogDir)" | Out-Null
