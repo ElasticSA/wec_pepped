@@ -12,7 +12,7 @@ foreach ( $prov in $ProviderList.GetEnumerator() ) {
         $LogPath = "$($prov.Value.LogDir)\$($prov.key)_$($chan.key).evtx"
 
         echo "=============================================="
-        echo "$prov/$chan"
+        echo "$($prov.key)/$($chan.key)"
         & wevtutil @('sl', "$($prov.key)/$($chan.key)", "/lfn:${LogPath}")
         & wevtutil @('sl', "$($prov.key)/$($chan.key)", "/ms:${LogSize}")
         & wevtutil @('gl', "$($prov.key)/$($chan.key)")

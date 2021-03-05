@@ -1,22 +1,25 @@
 ﻿
 # Try to Get AD PowerShell Cmdlets; will silently fail if we're not admin
-If (-Not (Get-Command Get-ADDomain -ErrorAction SilentlyContinue)) {
+If (-Not (Test-Path -Path .\_deps_check.txt)) {
+    If (-Not (Get-Command Get-ADDomain -ErrorAction SilentlyContinue)) {
 
-    try {
-        # 'New' Win 10
-        If (Get-Command Enable-WindowsOptionalFeature -ErrorAction SilentlyContinue) {
-            Add-WindowsCapability –online –Name “Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0” | Out-Null
+        try {
+            # 'New' Win 10
+            If (Get-Command Enable-WindowsOptionalFeature -ErrorAction SilentlyContinue) {
+                Add-WindowsCapability –online –Name “Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0” | Out-Null
+            }
+            # Win 7, Win 8.x, and 'old' Win 10
+            If (Get-Command Enable-WindowsOptionalFeature -ErrorAction SilentlyContinue) {
+                Enable-WindowsOptionalFeature -Online -FeatureName RSATClient-Roles-AD-Powershell | Out-Null
+            }
+            # Windows Server
+            If (Get-Command Install-WindowsFeature -ErrorAction SilentlyContinue) {
+                Install-WindowsFeature RSAT-AD-PowerShell | Out-Null
+            }
         }
-        # Win 7, Win 8.x, and 'old' Win 10
-        If (Get-Command Enable-WindowsOptionalFeature -ErrorAction SilentlyContinue) {
-            Enable-WindowsOptionalFeature -Online -FeatureName RSATClient-Roles-AD-Powershell | Out-Null
-        }
-        # Windows Server
-        If (Get-Command Install-WindowsFeature -ErrorAction SilentlyContinue) {
-            Install-WindowsFeature RSAT-AD-PowerShell | Out-Null
-        }
+        catch {}
     }
-    catch {}
+    Get-Date | Out-File -Encoding unicode -Force -FilePath .\_deps_check.txt
 }
 
 # ~~~~~~~~~~~~~~~~~~~ Configurables Start Here ~~~~~~~~~~~~~~~~~~~~~~
