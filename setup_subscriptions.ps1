@@ -8,11 +8,11 @@ foreach ( $prov in $ProviderList.GetEnumerator() ) {
 
     $domain_groups = ''
     foreach ($exc in $prov.Value.Exc_Groups) {
-        $sid = (Summon-ADGroup "$exc").SID.Value
+        $sid = (Summon-Group "$exc").SID.Value
         $domain_groups = $domain_groups + "(D;;GA;;;$sid)"
     }
     foreach ($inc in $prov.Value.Inc_Groups) {
-        $sid = (Summon-ADGroup "$inc").SID.Value
+        $sid = (Summon-Group "$inc").SID.Value
         $domain_groups = $domain_groups + "(A;;GA;;;$sid)"
     }
     if (-Not ([string]::IsNullOrWhiteSpace($domain_groups))) {
@@ -52,7 +52,7 @@ $(If ($doUpdate) {"-->"})
 -->
         <Query>
                 <![CDATA[
-$($chan.value)
+$($chan.Value."FF${FFProfile}")
                 ]]>
         </Query>
         <ReadExistingEvents>false</ReadExistingEvents>

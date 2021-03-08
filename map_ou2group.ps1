@@ -6,7 +6,7 @@ cd $PSScriptRoot
 
 foreach ( $grp in $GroupList.GetEnumerator() ){
  
-    $group = Summon-ADGroup "$($grp.key)"
+    $group = Summon-Group "$($grp.key)"
 
     $members = @();
     foreach ( $ou in $grp.value ) {
