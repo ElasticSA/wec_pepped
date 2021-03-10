@@ -270,7 +270,11 @@ $ChannelList = @{
     <Select Path="Microsoft-Windows-DNSServer/Audit">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
     <Select Path="DNS Server">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
     <Select Path="Microsoft-Windows-DNSServer/Audit">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
+  </Query>
+  <Query Id="1">
     <Select Path="Directory Service">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
+  </Query>
+  <Query Id="2">
     <Select Path="Microsoft-Windows-Dhcp-Server/AuditLog">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
     <Select Path="Microsoft-Windows-Dhcp-Server/Operational">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
   </Query>
@@ -389,7 +393,7 @@ function Summon-Group ([string]$name)
             $result = Get-LocalGroup "$name"
         }
         catch {
-            Write-Warning "CREATING new AD Group: $name"
+            Write-Warning "CREATING new Local Group: $name"
             $result = New-LocalGroup -Name "${name}" -Description "*Auto-created by WEC Setup*"
         }
     }

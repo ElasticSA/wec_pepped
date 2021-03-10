@@ -39,22 +39,22 @@ function gen_config() {
       when.equals.winlog.channel: Security
       lang: javascript
       id: security
-      file: ${path.home}/module/security/config/winlogbeat-security.js
+      file: `${path.home}/module/security/config/winlogbeat-security.js
   - script:
       when.equals.winlog.channel: Microsoft-Windows-Sysmon/Operational
-      lang: javasc
+      lang: javascript
       id: sysmon
-      file: ${path.home}/module/sysmon/config/winlogbeat-sysmon.js
+      file: `${path.home}/module/sysmon/config/winlogbeat-sysmon.js
   - script:
       when.equals.winlog.channel: Windows PowerShell
       lang: javascript
       id: powershell
-      file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
+      file: `${path.home}/module/powershell/config/winlogbeat-powershell.js
   - script:
       when.equals.winlog.channel: Microsoft-Windows-PowerShell/Operational
       lang: javascript
       id: powershell
-      file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
+      file: `${path.home}/module/powershell/config/winlogbeat-powershell.js
 "@ | Out-File -Encoding utf8 -Force -Append -FilePath "$output_conf"
         
         }
