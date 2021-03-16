@@ -28,7 +28,7 @@ If (-Not (Test-Path -Path .\_deps_check.txt)) {
 
 # ~~~~~~~~~~~~~~~~~~~ Configurables Start Here ~~~~~~~~~~~~~~~~~~~~~~
 
-# Summon-ADGroup() [below] uses this. 
+# Summon-Group() [below] uses this. 
 # New Groups will be created in $NewGroupOU (Auto set to 'Users' OU just below!)
 $NewGroupOU = $null
 # AD Base OU (Auto set just below)
@@ -36,7 +36,6 @@ $BaseOU = $null
 # Comment this out if you set these manually above
 If (Get-Command Get-ADDomain -ErrorAction SilentlyContinue) {
     $NewGroupOU = (Get-ADDomain).UsersContainer
-
     $BaseOU = (Get-ADDomain).DistinguishedName
 }
 
@@ -63,18 +62,21 @@ $GroupList = @{
 # - The AD Groups that map hosts to them (Include/Exclude)
 # NOTE: The AD Groups listed here will be created if missing!
 $ProviderList = @{
+
     "WecFwdLog-Domain-Clients" = @{
         GUID = "{ea76befc-2be5-4a24-bfab-3d9303ac27d5}";
         LogDir = "C:\Logs"
         LogSize = 10737418240 # 10G per channel/file
         Inc_Groups = @('Domain Clients');
     };
+
     "WecFwdLog-Domain-Controllers" = @{
         GUID = "{4f365d6b-57ea-466d-ad6e-22864307ad5f}";
         LogDir = "C:\Logs"
         LogSize = 10737418240 # 10G per channel/file
         Inc_Groups = @('Domain Controllers');
     };
+
     "WecFwdLog-Domain-Members" = @{
         GUID = "{47e1763d-1e45-435f-9073-70c1c08f70ee}";
         LogDir = "C:\Logs"
@@ -83,24 +85,28 @@ $ProviderList = @{
         # Auto Generated below
         #Exc_Groups = @('Domain Clients', 'Domain Controllers', 'Domain Miscellaneous', 'Domain Privileged', 'Domain Servers');
     };
+
     "WecFwdLog-Domain-Misc" = @{
         GUID = "{5bb6e603-33c4-4be3-bf40-102476243076}";
         LogDir = "C:\Logs"
         LogSize = 10737418240 # 10G per channel/file
         Inc_Groups = @('Domain Miscellaneous'); 
     };
+
     "WecFwdLog-Domain-Privileged" = @{
         GUID = "{c00ccb56-d596-40de-9a88-4e6c2a4244d4}";
         LogDir = "C:\Logs"
         LogSize = 10737418240 # 10G per channel/file
         Inc_Groups = @('Domain Privileged');
     };
+
     "WecFwdLog-Domain-Servers" = @{
         GUID= "{1673d607-4c45-4cbf-80ee-554eaf561626}";
         LogDir = "C:\Logs"
         LogSize = 10737418240 # 10G per channel/file
         Inc_Groups = @('Domain Servers');
     };
+
 }
 
 # Auto Exclude all other assigned Groups from Members
@@ -131,7 +137,7 @@ $ChannelList = @{
   </Query>
 </QueryList>
 '@;
-    };
+    }; # Application
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Misc
     "Misc" = @{
@@ -153,7 +159,7 @@ $ChannelList = @{
   </Query>
 </QueryList>
 '@;
-    };
+    }; # Misc
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Script (PowerShell)
     "Script" = @{
@@ -181,7 +187,7 @@ $ChannelList = @{
   </Query>
 </QueryList>
 '@;
-    }
+    }; # Script
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Security
     "Security" = @{
@@ -260,7 +266,7 @@ $ChannelList = @{
   </Query>
 </QueryList>
 '@;
-    }
+    }; # Security
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Service
     "Service" = @{
@@ -289,7 +295,7 @@ $ChannelList = @{
   </Query>
 </QueryList>
 '@;
-    };
+    }; # Service
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Sysmon
     "Sysmon" = @{
@@ -308,7 +314,7 @@ $ChannelList = @{
   </Query>
 </QueryList>
 '@;
-    };
+    }; # Sysmon
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ System
     "System" = @{
@@ -318,7 +324,6 @@ $ChannelList = @{
     <Select Path="System">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
     <Select Path="HardwareEvents">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
     <Select Path="Microsoft-Windows-TaskScheduler/Operational">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
-    <Select Path="Microsoft-Windows-Windows Defender/Operational">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
     <Select Path="Microsoft-Windows-SMBClient/Operational">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
     <Select Path="Microsoft-Windows-DriverFrameworks-UserMode/Operational">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
     <Select Path="Microsoft-Windows-Dhcp-Client/Admin">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0)]]</Select>
@@ -362,15 +367,24 @@ $ChannelList = @{
   </Query>
 </QueryList>
 '@;
-    };
+    }; # System
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ End
 
-} #$ChannelList
+} # $ChannelList
 
-# Minimal forward filters based in part on: https://docs.microsoft.com/en-us/windows/security/threat-protection/use-windows-event-forwarding-to-assist-in-intrusion-detection#bkmk-appendixe
-#Microsoft-Windows-Dhcp-Server/FilterNotifications
+# Extra processors to include in the generated winlogbeat.yml
+$WlbProcessorsExtras = @"
+- add_observer_metadata: ~
+"@
 
+# Extra Event Log inputs to include in the generated winlogbeat.yml
+$wlbEventLogsExtras = @"
+"@
+
+# Extra options to add to each Event Log input in the generated winlogbeat.yml
+$wlbEventLogOptions = @"
+"@
 
 # ~~~~~~~~~~~~~ Mostly internal ~~~~~~~~~~~~~~~~~~~~
 
