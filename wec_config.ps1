@@ -1,4 +1,7 @@
-﻿####
+﻿###
+# Copyright: Elastic NV (https://www.elastic.co/) 2021
+# Licence: AGPL 3.0
+# Author: Thorben Jändling
 # 
 
 cd $PSScriptRoot
