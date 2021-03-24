@@ -10,6 +10,8 @@ cd $PSScriptRoot
 
 . .\wec_config.ps1
 
+$TempSubFile = ".\wec_subscription.xml"
+
 foreach ( $prov in $ProviderList.GetEnumerator() ) {
 
     $domain_groups = ''
@@ -73,14 +75,16 @@ $($chan.Value."FF${FFProfile}")
         </AllowedSourceNonDomainComputers>
         <AllowedSourceDomainComputers>${domain_groups}</AllowedSourceDomainComputers>
 </Subscription>
-"@ | Out-File -Encoding utf8 -Force -FilePath .\new_subscription.xml
+"@ | Out-File -Encoding utf8 -Force -FilePath $TempSubFile
 
         If ($doUpdate) {
-            & wecutil ss /c:.\new_subscription.xml
+            & wecutil ss /c:$TempSubFile
         }
         Else {
-            & wecutil cs .\new_subscription.xml
+            & wecutil cs $TempSubFile
         }
+
+        Remove-Item -Path $TempSubFile
 
     }# End foreach $chan
 }# End foreach $prov
