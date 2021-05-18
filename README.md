@@ -1,6 +1,6 @@
 # Windows Event Collector scripts
 
-These scripts are to be using in conjunction with our WEC Cookboog guide: https://ela.st/tjs-wec-cookbook
+These scripts are to be used in conjunction with our WEC Cookboog guide: https://ela.st/tjs-wec-cookbook
 
 ## Articles
 
