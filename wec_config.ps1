@@ -12,7 +12,7 @@ If (-Not (Test-Path -Path .\_deps_check.txt)) {
 
         try {
             # 'New' Win 10
-            If (Get-Command Enable-WindowsOptionalFeature -ErrorAction SilentlyContinue) {
+            If (Get-Command Add-WindowsCapability -ErrorAction SilentlyContinue) {
                 Add-WindowsCapability –online –Name “Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0” | Out-Null
             }
             # Win 7, Win 8.x, and 'old' Win 10
