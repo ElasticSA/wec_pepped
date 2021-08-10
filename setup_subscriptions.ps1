@@ -29,9 +29,11 @@ foreach ( $prov in $ProviderList.GetEnumerator() ) {
 
     foreach ( $chan in $ChannelList.GetEnumerator() ) {
 
+        echo "-> $($prov.key)_$($chan.key)"
+        
         $doUpdate = $true
         try {
-            & wecutil gs "$($prov.key)_$($chan.key)" | Out-Null
+            & wecutil gs "$($prov.key)_$($chan.key)" *>1 |Out-Null
         }
         catch {
             $doUpdate = $false
@@ -78,10 +80,10 @@ $($chan.Value."FF${FFProfile}")
 "@ | Out-File -Encoding utf8 -Force -FilePath $TempSubFile
 
         If ($doUpdate) {
-            & wecutil ss /c:$TempSubFile
+            & wecutil ss /c:$TempSubFile |Out-Null
         }
         Else {
-            & wecutil cs $TempSubFile
+            & wecutil cs $TempSubFile |Out-Null
         }
 
         Remove-Item -Path $TempSubFile
